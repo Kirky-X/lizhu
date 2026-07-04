@@ -492,8 +492,18 @@ def main():
     epub_path = sys.argv[1]
     output_dir = sys.argv[2] if len(sys.argv) > 2 else None
 
-    converter = EpubConverter(epub_path, output_dir)
-    converter.convert()
+    try:
+        converter = EpubConverter(epub_path, output_dir)
+        converter.convert()
+    except FileNotFoundError as e:
+        print(f"[Error] {e}")
+        sys.exit(1)
+    except PermissionError as e:
+        print(f"[Error] 权限不足: {e}")
+        sys.exit(1)
+    except Exception as e:
+        print(f"[Error] EPUB 转换失败: {type(e).__name__}: {e}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":

@@ -75,8 +75,13 @@ def upload_and_extract(chunk_path, img_dir, mode="precision", img_prefix=""):
         if data.get("code") != 0:
             print(f"  [Error] API: {data.get('msg')}")
             return None
-        batch_id = data["data"]["batch_id"]
-        upload_url = data["data"]["file_urls"][0]
+        data_payload = data.get("data") or {}
+        batch_id = data_payload.get("batch_id")
+        file_urls = data_payload.get("file_urls") or []
+        if not batch_id or not file_urls:
+            print(f"  [Error] API response missing batch_id or file_urls: {data}")
+            return None
+        upload_url = file_urls[0]
     except Exception as e:
         print(f"  [Error] URL: {e}")
         return None
@@ -110,7 +115,8 @@ def upload_and_extract(chunk_path, img_dir, mode="precision", img_prefix=""):
             if poll_data.get("code") != 0:
                 print(".", end="", flush=True)
                 continue
-            results = poll_data["data"].get("extract_result", [])
+            data_payload = poll_data.get("data") or {}
+            results = data_payload.get("extract_result") or []
             if not results:
                 print(".", end="", flush=True)
                 continue

@@ -15,6 +15,10 @@ API_BASE_URL = os.environ.get("DEEPSEEK_OCR_API_URL", "https://www.aiping.cn/api
 API_KEY = os.environ.get("DEEPSEEK_OCR_API_KEY", "")
 MODEL = os.environ.get("DEEPSEEK_OCR_MODEL", "DeepSeek-OCR-2")
 
+# 输入验证常量(与 ocr.md 声明一致)
+SUPPORTED_FORMATS = {".png", ".jpg", ".jpeg", ".webp", ".gif"}
+MAX_FILE_SIZE_MB = 5
+
 
 def _ensure_api_key():
     """API key 必须显式提供，禁止硬编码。"""
@@ -26,6 +30,28 @@ def _ensure_api_key():
 
 def is_url(path: str) -> bool:
     return path.startswith("http://") or path.startswith("https://")
+
+
+def validate_local_image(image_path: str) -> None:
+    """验证本地图片文件：存在性、格式、大小(与 ocr.md 声明一致)。"""
+    path = Path(image_path)
+    if not path.exists():
+        print(f"[Error] 图像文件不存在: {image_path}")
+        sys.exit(1)
+
+    suffix = path.suffix.lower()
+    if suffix not in SUPPORTED_FORMATS:
+        print(
+            f"[Error] 不支持的格式: {suffix}。支持: {', '.join(sorted(SUPPORTED_FORMATS))}"
+        )
+        sys.exit(1)
+
+    size_mb = path.stat().st_size / (1024 * 1024)
+    if size_mb > MAX_FILE_SIZE_MB:
+        print(
+            f"[Warning] 文件 {size_mb:.1f}MB 超过 {MAX_FILE_SIZE_MB}MB 建议阈值，"
+            "可能上传失败或超时。建议压缩后重试。"
+        )
 
 
 def encode_image_to_base64(image_path: str) -> str:
@@ -107,6 +133,10 @@ def main():
 
     image_input = sys.argv[1]
     question = sys.argv[2] if len(sys.argv) > 2 else "识别图像中的所有文字内容"
+
+    # 本地文件先做输入验证(URL 跳过)
+    if not is_url(image_input):
+        validate_local_image(image_input)
 
     try:
         ocr_image(image_input, question)

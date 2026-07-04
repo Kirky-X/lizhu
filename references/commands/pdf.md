@@ -149,6 +149,17 @@ python3 scripts/pdf-parse/mineru_batch.py <pdf_path_or_dir> [output_dir]
 - 公式是否正确转换为 LaTeX？
 - 表格结构是否完整？
 
+### Phase 5: 可选 normalize 后处理(⚠️ 检查点)
+
+MinerU 模式输出的 Markdown 常见格式问题：段落软换行、表格列不齐、fence 未闭合。转换完成后**询问用户**：
+
+> 转换完成。是否需要整理 Markdown 格式(normalize)？可修复段落断行、表格、代码块。
+
+- 用户同意 → 调用 [`normalize.md`](normalize.md) 流程：`scripts/md-normalizer/semantic_normalize.py` + `mdformat`
+- 用户拒绝 → 交付原始 Markdown
+
+PyMuPDF 轻量模式输出一般较干净，normalize 为可选；MinerU 模式推荐询问。
+
 ## 异常处理
 
 | 异常                  | 处理                               | Fallback         |

@@ -116,8 +116,25 @@ echo "无名章节: $(ls "<output_dir>"/[0-9]*.md 2>/dev/null | grep -c '章节_
 如果发现异常(章节数为 0、大量"章节 N"无名文件、图片全部缺失)，主动告知用户并建议排查方向。
 
 转换完成后，**询问用户是否满意**：
-- 满意 → 结束
+- 满意 → 询问是否需要 normalize 各章节 Markdown(见下)
 - 不满意 → 根据具体问题进入排查(见下方"常见问题")
+
+### Phase E: 可选 normalize 后处理(⚠️ 检查点)
+
+markdownify 转换可能产生：段落软换行、表格列不齐、fence 未闭合。询问用户：
+
+> 转换完成。是否需要整理各章节 Markdown 格式(normalize)？可修复段落断行、表格、代码块。
+
+- 用户同意 → 对每个 `NN_章节.md` 调用 [`normalize.md`](normalize.md) 流程
+  ```bash
+  for f in "<output_dir>"/[0-9]*.md; do
+    python3 scripts/md-normalizer/semantic_normalize.py "$f" "$f"
+  done
+  mdformat --wrap keep "<output_dir>"/[0-9]*.md
+  ```
+- 用户拒绝 → 交付原始 Markdown
+
+注意：`SUMMARY.md` 是目录文件，不需要 normalize。
 
 ## 输出结构
 

@@ -173,7 +173,7 @@ def find_book_title(all_texts, book_hint):
     exclude_re = re.compile(
         r"^(第[一二三四五六七八九十\d]+[章节篇回讲])"
         r"|(原则)"
-        r"^(^\d+$)"
+        r"|^\d+$"
     )
 
     # ── Pass 1: 精确匹配（去前缀后） ──
@@ -272,8 +272,15 @@ def process_file(input_path, output_path, book_hint=None):
 
         output_lines.append("#" * level + " " + t + "\n")
 
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.writelines(output_lines)
+    # 原子写入：先写临时文件，再 rename，避免写入失败损坏原文件
+    import tempfile
+    out_path = Path(output_path)
+    with tempfile.NamedTemporaryFile(
+        mode="w", encoding="utf-8", dir=out_path.parent, delete=False, suffix=".tmp"
+    ) as tmp_f:
+        tmp_f.writelines(output_lines)
+        tmp_path = Path(tmp_f.name)
+    tmp_path.replace(out_path)
 
     # 统计
     counts = {1: 0, 2: 0, 3: 0, 4: 0}

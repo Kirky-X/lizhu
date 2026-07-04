@@ -526,15 +526,15 @@ def parse_with_mineru(
             print(f"[Error] Download failed: {zip_response.status_code}")
             return ""
 
-        # Save to temp file and extract
-        temp_zip_path = f"/tmp/mineru_{batch_id}.zip"
-        with open(temp_zip_path, "wb") as f:
-            f.write(zip_response.content)
-
+        # Save to temp file and extract (use tempfile, never hardcode /tmp)
         import zipfile
         import tempfile
 
         with tempfile.TemporaryDirectory() as temp_dir:
+            temp_zip_path = Path(temp_dir) / f"mineru_{batch_id}.zip"
+            with open(temp_zip_path, "wb") as f:
+                f.write(zip_response.content)
+
             with zipfile.ZipFile(temp_zip_path, "r") as zf:
                 zf.extractall(temp_dir)
 
@@ -544,12 +544,12 @@ def parse_with_mineru(
                 markdown_content = full_md_path.read_text(encoding="utf-8")
             else:
                 # Try content_list.json fallback
-                content_json = list(Path(temp_dir).glob("*_content_list.json"))[0]
-                content_data = json.loads(content_json.read_text())
+                content_json_candidates = list(Path(temp_dir).glob("*_content_list.json"))
+                if not content_json_candidates:
+                    print("[Error] No full.md and no *_content_list.json in zip")
+                    return ""
+                content_data = json.loads(content_json_candidates[0].read_text())
                 markdown_content = extract_mineru_markdown(content_data)
-
-        # Cleanup temp zip
-        Path(temp_zip_path).unlink(missing_ok=True)
 
     except Exception as e:
         print(f"[Error] Failed to download/extract: {e}")

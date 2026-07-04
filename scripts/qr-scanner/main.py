@@ -246,7 +246,10 @@ Examples:
     else:
         print(output)
 
-    sys.exit(0 if (args.batch and all_results) or (not args.batch and results) else 1)
+    # Exit code semantics: 0 = scan completed successfully (regardless of QR found or not)
+    # 1 = scan failed (file not found, invalid format, scan exception)
+    # "No QR detected" is a successful scan with empty results, NOT a failure.
+    sys.exit(0)
 
 
 if __name__ == "__main__":
