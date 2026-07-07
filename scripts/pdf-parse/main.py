@@ -536,7 +536,16 @@ def parse_with_mineru(
                 f.write(zip_response.content)
 
             with zipfile.ZipFile(temp_zip_path, "r") as zf:
-                zf.extractall(temp_dir)
+                # ZIP Slip 防护：逐成员校验路径不逃逸 temp_dir
+                td_resolved = Path(temp_dir).resolve()
+                for member in zf.namelist():
+                    member_target = (td_resolved / member).resolve()
+                    try:
+                        member_target.relative_to(td_resolved)
+                    except ValueError:
+                        print(f"  [Warn] 跳过逃逸成员: {member}")
+                        continue
+                    zf.extract(member, temp_dir)
 
             # Find full.md
             full_md_path = Path(temp_dir) / "full.md"
@@ -544,7 +553,9 @@ def parse_with_mineru(
                 markdown_content = full_md_path.read_text(encoding="utf-8")
             else:
                 # Try content_list.json fallback
-                content_json_candidates = list(Path(temp_dir).glob("*_content_list.json"))
+                content_json_candidates = list(
+                    Path(temp_dir).glob("*_content_list.json")
+                )
                 if not content_json_candidates:
                     print("[Error] No full.md and no *_content_list.json in zip")
                     return ""

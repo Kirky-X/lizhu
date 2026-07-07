@@ -1,10 +1,10 @@
 ---
 name: lizhu
-description: "统一文档数字化工具。以 markitdown 为主转换引擎，输入图片(OCR)/PDF/EPUB/Word/PPT/Excel/HTML/CSV/JSON/二维码，输出格式化 Markdown。触发词：数字化文档、图片转文字、PDF转Markdown、EPUB转换、Word转Markdown、PPT转Markdown、Excel转Markdown、HTML转Markdown、扫描二维码、OCR、识别二维码、parse PDF、convert epub、markitdown、提取文字、normalize markdown、整理markdown格式"
+description: "统一文档数字化工具，以 markitdown 为主引擎。输入图片(OCR)/PDF/Word/PPT/Excel/EPUB/HTML/二维码等，输出格式化 Markdown。触发：数字化文档、PDF转Markdown、Word转Markdown、OCR、识别二维码、markitdown、parse PDF、整理markdown格式"
 license: MIT
 ---
 
-# lizhu (栗子) —— 统一文档数字化技能
+# 离朱 (lizhu) —— 统一文档数字化技能
 
 以 [Microsoft markitdown](https://github.com/microsoft/markitdown) 为**主转换引擎**的统一文档数字化管线，覆盖 PDF/Word/PPT/Excel/HTML/CSV/JSON/XML/ZIP/EPUB/图片/音频/YouTube 等格式。六类子命令：
 
@@ -21,20 +21,20 @@ license: MIT
 
 > 🔴 **CHECKPOINT**:同一张图片既可能含二维码也可能需要 OCR —— 必须先确认用户意图(扫码 vs 识文字)，不得擅自选择子命令。若用户意图模糊，先提问澄清。
 
-| 用户输入                              | 子命令      | 完整流程                                                                |
-| ------------------------------------- | ----------- | ----------------------------------------------------------------------- |
-| `.docx` / `.pptx` / `.xlsx` / `.xls` / `.msg` | markitdown | [`references/commands/markitdown.md`](references/commands/markitdown.md) |
+| 用户输入                                               | 子命令     | 完整流程                                                                 |
+| ------------------------------------------------------ | ---------- | ------------------------------------------------------------------------ |
+| `.docx` / `.pptx` / `.xlsx` / `.xls` / `.msg`          | markitdown | [`references/commands/markitdown.md`](references/commands/markitdown.md) |
 | `.html` / `.csv` / `.json` / `.xml` / `.yaml` / `.zip` | markitdown | [`references/commands/markitdown.md`](references/commands/markitdown.md) |
-| `.pdf`(简单文本/普通布局)             | markitdown  | [`references/commands/markitdown.md`](references/commands/markitdown.md) |
-| `.pdf`(论文/公式/扫描版)              | pdf         | [`references/commands/pdf.md`](references/commands/pdf.md)              |
-| `.epub`(单文件转换)                   | markitdown  | [`references/commands/markitdown.md`](references/commands/markitdown.md) |
-| `.epub`(按 TOC 拆章节)                | epub        | [`references/commands/epub.md`](references/commands/epub.md)            |
-| YouTube URL / HTTP URL                | markitdown  | [`references/commands/markitdown.md`](references/commands/markitdown.md) |
-| 图片 + "扫描二维码/QR/扫码" 意图      | qr          | [`references/commands/qr.md`](references/commands/qr.md)                |
-| 图片 + "识别文字/OCR/提取文字" 意图   | ocr         | [`references/commands/ocr.md`](references/commands/ocr.md)              |
-| `.md` 文件 + "整理/规范化/normalize"  | normalize   | [`references/commands/normalize.md`](references/commands/normalize.md)  |
-| 图片 + 意图不明                       | 提问        | 询问"扫码还是识文字"，不得擅自选择                                       |
-| 不支持的扩展名                        | 报错        | 列出 markitdown 支持的格式 + 图片/PDF/EPUB                              |
+| `.pdf`(简单文本/普通布局)                              | markitdown | [`references/commands/markitdown.md`](references/commands/markitdown.md) |
+| `.pdf`(论文/公式/扫描版)                               | pdf        | [`references/commands/pdf.md`](references/commands/pdf.md)               |
+| `.epub`(单文件转换)                                    | markitdown | [`references/commands/markitdown.md`](references/commands/markitdown.md) |
+| `.epub`(按 TOC 拆章节)                                 | epub       | [`references/commands/epub.md`](references/commands/epub.md)             |
+| YouTube URL / HTTP URL                                 | markitdown | [`references/commands/markitdown.md`](references/commands/markitdown.md) |
+| 图片 + "扫描二维码/QR/扫码" 意图                       | qr         | [`references/commands/qr.md`](references/commands/qr.md)                 |
+| 图片 + "识别文字/OCR/提取文字" 意图                    | ocr        | [`references/commands/ocr.md`](references/commands/ocr.md)               |
+| `.md` 文件 + "整理/规范化/normalize"                   | normalize  | [`references/commands/normalize.md`](references/commands/normalize.md)   |
+| 图片 + 意图不明                                        | 提问       | 询问"扫码还是识文字"，不得擅自选择                                       |
+| 不支持的扩展名                                         | 报错       | 列出 markitdown 支持的格式 + 图片/PDF/EPUB                               |
 
 > 🔴 标记的行需用户显式确认意图；图片输入时禁止假设用户想要 qr 或 ocr 中的某一个。
 
@@ -72,14 +72,14 @@ license: MIT
 
 ## 依赖矩阵
 
-| 子命令       | Python 库                                  | 环境变量                              | 系统依赖 |
-| ------------ | ------------------------------------------ | ------------------------------------- | -------- |
-| markitdown   | `markitdown[all]`(主) / `openai`(LLM 描述) | `OPENAI_API_KEY` (仅 --llm-model 时必需) | 无       |
-| qr           | `pillow`, `zxing-cpp`                      | 无                                    | 无       |
-| ocr          | `openai`                                   | `DEEPSEEK_OCR_API_KEY` (必需)         | 无       |
-| pdf          | `PyMuPDF`, `requests`                      | `MINERU_API_KEY` (仅 MinerU 模式必需) | 无       |
-| epub         | `ebooklib`, `beautifulsoup4`, `markdownify`, `lxml` | 无                                    | 无       |
-| normalize    | `mdformat`, `mdformat-gfm`, `mdformat-frontmatter` | 无                                    | 无       |
+| 子命令     | Python 库                                           | 环境变量                                 | 系统依赖 |
+| ---------- | --------------------------------------------------- | ---------------------------------------- | -------- |
+| markitdown | `markitdown[all]`(主) / `openai`(LLM 描述)          | `OPENAI_API_KEY` (仅 --llm-model 时必需) | 无       |
+| qr         | `pillow`, `zxing-cpp`                               | 无                                       | 无       |
+| ocr        | `openai`                                            | `DEEPSEEK_OCR_API_KEY` (必需)            | 无       |
+| pdf        | `PyMuPDF`, `requests`                               | `MINERU_API_KEY` (仅 MinerU 模式必需)    | 无       |
+| epub       | `ebooklib`, `beautifulsoup4`, `markdownify`, `lxml` | 无                                       | 无       |
+| normalize  | `mdformat`, `mdformat-gfm`, `mdformat-frontmatter`  | 无                                       | 无       |
 
 **统一安装**：
 
@@ -94,25 +94,25 @@ pip install mdformat mdformat-gfm mdformat-frontmatter
 
 ## 失败模式与 fallback
 
-| 触发条件                          | 一线修复                                      | 仍失败兜底                                |
-| --------------------------------- | --------------------------------------------- | ----------------------------------------- |
-| 图片输入但意图不明(qr vs ocr)     | 询问用户"扫码还是识文字"                       | 用户拒绝澄清 → 终止，不得擅自选择          |
-| Python 库缺失                     | 提示 `pip install <package>`，终止             | 无                                        |
-| `DEEPSEEK_OCR_API_KEY` 未设置     | 提示 `export DEEPSEEK_OCR_API_KEY=...`，终止   | 无(禁止硬编码回退到默认 key)              |
-| `MINERU_API_KEY` 未设置           | 提示 `export MINERU_API_KEY=...`，降级到 PyMuPDF 轻量模式 | 用户确认无 key → 仅用 `--mode light`      |
-| MinerU API 超时(>60s)             | 建议分批处理或减小文件                         | 降级到 PyMuPDF 轻量模式                   |
-| PyMuPDF 提取失败(扫描版 PDF)      | 自动切换 MinerU OCR 模式                       | 报错并展示具体异常                        |
-| EPUB 无 TOC                       | 回退到 h1/h2 标题拆分                          | 章节命名为 `章节 N`，提示用户手动重命名    |
-| 二维码未检测到                    | 提示可能原因(模糊/太小/无二维码)               | 建议 OCR fallback 识文字                  |
-| 文件 > 子命令阈值(qr 10MB / ocr 5MB / pdf 200MB / epub 500MB / markitdown 500MB) | 提示大文件，等待用户确认继续或压缩 | 用户拒绝 → 终止                           |
-| markitdown: 未安装                      | 提示 `pip install 'markitdown[all]'`，终止      | 无                                        |
-| markitdown: 不支持的扩展名              | 报 ConvertError 列出支持格式，退出码 2          | 改用 pdf/epub 子命令(如适用)              |
-| markitdown: 可选依赖缺失(如 [pdf])      | 提示安装对应 extras，终止                       | 改用 pdf 子命令(PyMuPDF 内置)             |
-| markitdown: --llm-model 但 OPENAI_API_KEY 未设置 | 报 ConvertError 提示环境变量，退出码 2   | 不带 --llm-model 重试(仅元数据)           |
-| markitdown: --normalize 但 md-normalizer 缺失 | 添加 warning 跳过 normalize 步骤，不报错   | 修复 md-normalizer 后重跑                 |
-| markitdown: convert() 抛异常            | 包裹为 ConvertError，退出码 2，含原始异常信息   | 改用专用子命令(pdf/epub)                  |
-| normalize: mdformat 安装失败            | 只执行语义修复，跳过格式规范化                  | 交付语义修复结果并说明 mdformat 跳过      |
-| normalize: 输入非 .md 文件              | 提醒用户确认                                    | 终止                                      |
+| 触发条件                                                                         | 一线修复                                                  | 仍失败兜底                              |
+| -------------------------------------------------------------------------------- | --------------------------------------------------------- | --------------------------------------- |
+| 图片输入但意图不明(qr vs ocr)                                                    | 询问用户"扫码还是识文字"                                  | 用户拒绝澄清 → 终止，不得擅自选择       |
+| Python 库缺失                                                                    | 提示 `pip install <package>`，终止                        | 无                                      |
+| `DEEPSEEK_OCR_API_KEY` 未设置                                                    | 提示 `export DEEPSEEK_OCR_API_KEY=...`，终止              | 无(禁止硬编码回退到默认 key)            |
+| `MINERU_API_KEY` 未设置                                                          | 提示 `export MINERU_API_KEY=...`，降级到 PyMuPDF 轻量模式 | 用户确认无 key → 仅用 `--mode light`    |
+| MinerU API 超时(>60s)                                                            | 建议分批处理或减小文件                                    | 降级到 PyMuPDF 轻量模式                 |
+| PyMuPDF 提取失败(扫描版 PDF)                                                     | 自动切换 MinerU OCR 模式                                  | 报错并展示具体异常                      |
+| EPUB 无 TOC                                                                      | 回退到 h1/h2 标题拆分                                     | 章节命名为 `章节 N`，提示用户手动重命名 |
+| 二维码未检测到                                                                   | 提示可能原因(模糊/太小/无二维码)                          | 建议 OCR fallback 识文字                |
+| 文件 > 子命令阈值(qr 10MB / ocr 5MB / pdf 200MB / epub 500MB / markitdown 500MB) | 提示大文件，等待用户确认继续或压缩                        | 用户拒绝 → 终止                         |
+| markitdown: 未安装                                                               | 提示 `pip install 'markitdown[all]'`，终止                | 无                                      |
+| markitdown: 不支持的扩展名                                                       | 报 ConvertError 列出支持格式，退出码 2                    | 改用 pdf/epub 子命令(如适用)            |
+| markitdown: 可选依赖缺失(如 [pdf])                                               | 提示安装对应 extras，终止                                 | 改用 pdf 子命令(PyMuPDF 内置)           |
+| markitdown: --llm-model 但 OPENAI_API_KEY 未设置                                 | 报 ConvertError 提示环境变量，退出码 2                    | 不带 --llm-model 重试(仅元数据)         |
+| markitdown: --normalize 但 md-normalizer 缺失                                    | 添加 warning 跳过 normalize 步骤，不报错                  | 修复 md-normalizer 后重跑               |
+| markitdown: convert() 抛异常                                                     | 包裹为 ConvertError，退出码 2，含原始异常信息             | 改用专用子命令(pdf/epub)                |
+| normalize: mdformat 安装失败                                                     | 只执行语义修复，跳过格式规范化                            | 交付语义修复结果并说明 mdformat 跳过    |
+| normalize: 输入非 .md 文件                                                       | 提醒用户确认                                              | 终止                                    |
 
 ## 禁止事项(反例黑名单)
 

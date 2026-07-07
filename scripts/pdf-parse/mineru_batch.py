@@ -156,7 +156,16 @@ def upload_and_extract(chunk_path, img_dir, mode="precision", img_prefix=""):
             with open(zip_path, "wb") as zf:
                 zf.write(dl.content)
             with zipfile.ZipFile(zip_path, "r") as z:
-                z.extractall(td)
+                # ZIP Slip 防护：逐成员校验路径不逃逸 td
+                td_resolved = Path(td).resolve()
+                for member in z.namelist():
+                    member_target = (td_resolved / member).resolve()
+                    try:
+                        member_target.relative_to(td_resolved)
+                    except ValueError:
+                        print(f"  [Warn] 跳过逃逸成员: {member}")
+                        continue
+                    z.extract(member, td)
 
             # Copy images from zip to img_dir with prefix
             img_count = 0
