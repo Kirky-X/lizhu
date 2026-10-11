@@ -1,6 +1,6 @@
 ---
 name: lizhu
-description: "统一文档数字化工具，以 markitdown 为主引擎。输入图片(OCR)/PDF/Word/PPT/Excel/EPUB/HTML/二维码等，输出格式化 Markdown。触发：数字化文档、PDF转Markdown、Word转Markdown、OCR、识别二维码、markitdown、parse PDF、整理markdown格式"
+description: "统一文档数字化工具，以 markitdown 为主引擎。输入图片(OCR)/PDF/Word/PPT/Excel/EPUB/HTML/二维码等，输出格式化 Markdown。触发：数字化文档、PDF转Markdown、Word转Markdown、OCR、识别二维码、markitdown、parse PDF、整理markdown格式。边界：图片理解/看图问答→wudaozi；学术流水线内的文档转换→liuxiang"
 license: MIT
 ---
 
