@@ -41,10 +41,7 @@ yarn-error.log*
 *.log
 # Meta
 .meta
-# 测试代码（开发期使用，不入仓库）
-tests/
-**/tests/
-**/test/
+# 测试：pytest 源码 tests/ 入仓库；缓存/产物忽略（.pytest_cache 见下）
 # Darwin skill 优化产物（开发期使用，不入仓库）
 results.tsv
 test-prompts.json
