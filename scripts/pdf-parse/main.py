@@ -691,7 +691,15 @@ def parse_pdf(
 
     # Execute parsing based on selected mode
     if selected_mode == "light":
-        return parse_with_pymupdf(filepath, output_path, extract_images)
+        result = parse_with_pymupdf(filepath, output_path, extract_images)
+        if result:
+            return result
+        print("[Info] PyMuPDF returned no content, falling back to MinerU OCR mode")
+        fallback = parse_with_mineru(filepath, "light", language, output_path)
+        if fallback:
+            return fallback
+        print("[Error] Both PyMuPDF and MinerU extraction failed")
+        return ""
     elif selected_mode == "mineru-light":
         return parse_with_mineru(filepath, "light", language, output_path)
     elif selected_mode == "mineru-precision":
